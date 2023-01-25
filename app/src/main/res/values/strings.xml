@@ -1,0 +1,9 @@
+<resources>
+	<string name="app_name">SpeedCheckerKotlin</string>
+	<string name="title">Welcome to MMH speed checker!</string>
+	<string name="start">Start</string>
+	<string name="testing">testing...</string>
+	<string name="result_title_final">Final speed:</string>
+	<string name="result_title">Current speed:</string>
+	<string name="mb_s">Mb/s</string>
+</resources>
