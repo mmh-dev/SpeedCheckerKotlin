@@ -31,7 +31,7 @@ class SpeedViewModel : ViewModel() {
         _isJobCancelled.value = false
         downloadedSizes = arrayListOf(0,0,0)
 
-        val timer = object : CountDownTimer(10000, 1000) {
+        val timer = object : CountDownTimer(10000, 100) {
             override fun onTick(l: Long) {
                 val totalDownloadedSize = downloadedSizes[0] + downloadedSizes[1] + downloadedSizes[2]
                 consolidatedSpeedList.add(totalDownloadedSize)
@@ -54,40 +54,38 @@ class SpeedViewModel : ViewModel() {
 
     private fun startCoroutine(index: Int) {
         var input: InputStream? = null
-        viewModelScope.launch {
-            launch(Dispatchers.IO) {
-                try {
-                    val url = URL(DOWNLOAD_URL)
-                    val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
-                    conn.apply {
-                        requestMethod = "GET"
-                        connectTimeout = 1000
-                        readTimeout = 1000
-                    }
-                    if (conn.responseCode == HttpURLConnection.HTTP_OK) {
-                        conn.connect()
-                        val buffer = ByteArray(1024)
-                        var bufferLength = 0
-                        input = conn.inputStream
-
-                        while (input!!.read(buffer) > 0) {
-                            bufferLength = input!!.read(buffer)
-                            if (resetDownloadSize) {
-                                downloadedSizes[index] = 0
-                                resetDownloadSize = false
-                            }
-                            downloadedSizes[index] += bufferLength
-                        }
-                    } else {
-                        conn.disconnect()
-                        Log.e("server no response: ", conn.responseCode.toString())
-                    }
-
-                } catch (e: Exception) {
-                    Log.e("error: ", e.message.toString())
-                } finally {
-                    input?.close()
+        viewModelScope.launch (Dispatchers.IO) {
+            try {
+                val url = URL(DOWNLOAD_URL)
+                val conn: HttpURLConnection = url.openConnection() as HttpURLConnection
+                conn.apply {
+                    requestMethod = "GET"
+                    connectTimeout = 1000
+                    readTimeout = 1000
                 }
+                if (conn.responseCode == HttpURLConnection.HTTP_OK) {
+                    conn.connect()
+                    val buffer = ByteArray(1024)
+                    var bufferLength = 0
+                    input = conn.inputStream
+
+                    while (input!!.read(buffer) > 0) {
+                        bufferLength = input!!.read(buffer)
+                        if (resetDownloadSize) {
+                            downloadedSizes[index] = 0
+                            resetDownloadSize = false
+                        }
+                        downloadedSizes[index] += bufferLength
+                    }
+                } else {
+                    conn.disconnect()
+                    Log.e("server no response: ", conn.responseCode.toString())
+                }
+
+            } catch (e: Exception) {
+                Log.e("error: ", e.message.toString())
+            } finally {
+                input?.close()
             }
         }
     }
