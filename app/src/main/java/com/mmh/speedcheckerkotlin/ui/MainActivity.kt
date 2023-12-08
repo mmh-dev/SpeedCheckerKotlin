@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import com.mmh.speedcheckerkotlin.R
 import com.mmh.speedcheckerkotlin.databinding.ActivityMainBinding
 import com.mmh.speedcheckerkotlin.viewmodels.SpeedViewModel
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
